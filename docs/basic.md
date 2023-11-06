@@ -2,7 +2,7 @@
 
 <h2>什麼是Kubernetes</h2>
 
-Kubernetes是由google所釋出的一種開源系統, 用於管理容器的工作負載及服務, 並容易自動化工作。容器比VM是為更輕量級的, 它具有自己的檔案系統、CPU、Memory、Process等, 並且與基礎架構分開, 因此可以跨雲和不同OS 發行版(註: 因為容器是共享操作系統, 只能是基於Linux的容器在Linux作業系統上)之間移植。 
+Kubernetes是由google所釋出的一種開源系統, 用於管理容器的工作負載及服務, 並容易自動化工作。容器比VM是為更輕量級的, 它具有自己的檔案系統、CPU、Memory、Process等, 並且與基礎架構分開, 因此可以跨雲和不同OS 發行版(註: 因為容器是共享操作業系統, 只能是基於Linux的容器在Linux作業系統上)之間移植。 
 
 
 <h2>Kubernetes 元件</h2>
@@ -70,3 +70,5 @@ Kubernetes是由google所釋出的一種開源系統, 用於管理容器的工�
   * Container Resource Monitoring: 記錄有關container時間序的計量到中央資料庫上, 並提供UI來瀏覽資料。
   * Cluster-level Logging: 將容器的log保存到一個集中的log store中, 並提供搜索和瀏覽。
   * Network Plugins: 是實作容器網路介面(CNI)規範的元件, 它們負責為Pod分配IP 位址, 並使這些Pod能在cluster內部相互通訊。
+
+[Next -> minikube](playground.md)
