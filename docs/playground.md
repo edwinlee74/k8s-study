@@ -182,4 +182,27 @@ minikube也有裝上dashboard, 可以讓你了解目前cluster狀態及一些設
   ```
   此時開啟你的瀏覽器<ip_from_above>/foo或<ip_from_above>/bar應有訊息回傳。
 
-  
+***minikube 常用指令***
+
+  * config
+  ```shell
+   # 固定以vmware為minikube建置環境
+   $minikube config set driver vmware
+   # 設置記憶體大小
+   $minikube config set memory 9001
+   # 查看已配置的設定
+   $minikube config view
+  ```
+  * start
+  ```shell
+   # 預設minikube會使用最新版的kubenetes來安裝, 也可以指定版本
+   $minikube start --kubernetes-version=v1.11.10
+  ```
+
+  * runtime
+  ```shell
+   # runtime是可選的, 有下列三種可選擇
+     * containerd
+     * cri-o
+     * docker
+  ```
