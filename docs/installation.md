@@ -250,3 +250,65 @@ k8s-node1    Ready    worker          20m   v1.29.0
 k8s-node2    Ready    worker          20m   v1.29.0
 k8s-node3    Ready    worker          19m   v1.29.0
 ```
+
+<h2>Kubernetes Dashboard</h2>
+
+Kubernetes提供了一個網頁GUI介面, 可以用來管理cluster 資源和獲得一些訊息, 預設下不會自動部署Dashboard, 因此要手動部署, 可以透過下列方式:
+```shell
+###部署kubernetes dashboard
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.7.0/aio/deploy/recommended.yaml
+
+###建立account for dashboard
+kubectl apply -f dashboard-adminuser.yaml
+
+/*
+#-----dashboard-adminuser.yaml-------#
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: admin-user
+  namespace: kubernetes-dashboard
+
+---
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: admin-user
+  namespace: kubernetes-dashboard
+  annotations:
+    kubernetes.io/service-account.name: "admin-user"   
+type: kubernetes.io/service-account-token  
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: admin-user
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: admin-user
+  namespace: kubernetes-dashboard
+*/
+
+###在你的本機端執行, 透proxy方式來連入dashboard
+kubectl proxy
+
+###產生一個token來登入dashboard, 可加--duration=0s指定存活時間
+kubectl -n kubernetes-dashboard create token admin-user
+
+###建立一個長期有效的token
+kubectl get secret admin-user -n kubernetes-dashboard -o jsonpath={".data.token"} | base64 -d
+
+###如需要刪除admin user
+kubectl -n kubernetes-dashboard delete serviceaccount admin-user
+kubectl -n kubernetes-dashboard delete clusterrolebinding admin-user
+
+```
+![Kubernetes cluster 元件](../img/dashboard-login.png)
+    <h4 align=center>使用token 來login</h4>
