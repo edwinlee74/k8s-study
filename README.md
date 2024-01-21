@@ -6,3 +6,7 @@ Kubernetes是一個開源的容器編排引擎, 也被簡稱為K8s,用以對容�
 * [Kubernetes基礎](docs/basic.md)
 * [試玩Kubernetes](docs/playground.md)
 * [安裝Kubernetes cluster](docs/installation.md)
+* [憑證](docs/certificates.md)
+* [kubectl cheat sheet](doc/kubectl_cheatsheet.md)
+* 資源
+   * [工作負載資源](doc/workload.md)
