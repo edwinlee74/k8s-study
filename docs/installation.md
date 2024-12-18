@@ -251,6 +251,75 @@ k8s-node2    Ready    worker          20m   v1.29.0
 k8s-node3    Ready    worker          19m   v1.29.0
 ```
 
+<h2>etcd 安裝 (若有需要另用外部etcd) </h2>
+
+```shell
+### 注意: 在Production環境中, 最低版本3.4.22+ 和3.5.6+。
+### 首先，安裝 etcd。
+export RELEASE=$(curl -s https://api.github.com/repos/etcd-io/etcd/releases/latest | grep tag_name | cut -d '"' -f 4)
+wget https://github.com/etcd-io/etcd/releases/download/${RELEASE}/etcd-${RELEASE}-linux-amd64.tar.gz
+
+### 解壓縮下載的檔案
+tar xvf etcd-${RELEASE}-linux-amd64.tar.gz
+cd etcd-${RELEASE}-linux-amd64
+
+### 將etcd binary檔搬至/usr/local/bin/
+sudo mv etcd etcdctl etcdutl /usr/local/bin/
+
+### 確認版本
+etcd --version
+etcdctl version
+
+### 建立設定檔及資料檔的目錄
+sudo mkdir -p /var/lib/etcd/
+sudo mkdir /etc/etcd
+
+### 建立etcd 系統用戶
+sudo groupadd --system etcd
+sudo useradd -s /sbin/nologin --system -g etcd etcd
+sudo chown -R etcd:etcd /var/lib/etcd/
+
+### 建立一個systemd服務檔來管理etcd服務
+sudo vi /etc/systemd/system/etcd.service
+如下面內容
+
+[Unit]
+Description=etcd key-value store
+Documentation=https://github.com/etcd-io/etcd
+After=network.target
+
+[Service]
+User=etcd
+Type=notify
+Environment=ETCD_DATA_DIR=/var/lib/etcd
+Environment=ETCD_NAME=%m
+ExecStart=/usr/local/bin/etcd
+Restart=always
+RestartSec=10s
+LimitNOFILE=40000
+
+[Install]
+WantedBy=multi-user.target
+
+### 啟動並啟用etcd服務
+sudo systemctl daemon-reload
+sudo systemctl start etcd
+sudo systemctl enable etcd
+
+
+### 檢查etcd服務狀態
+sudo systemctl status etcd
+
+### 測試etcd服務
+edwin@k8s-master:~$ etcdctl --endpoints=localhost:2379 put foo bar
+OK
+
+edwin@k8s-master:~$ etcdctl --endpoints=localhost:2379 get foo
+foo
+bar
+
+```
+
 <h2>Kubernetes Dashboard</h2>
 
 Kubernetes提供了一個網頁GUI介面, 可以用來管理cluster 資源和獲得一些訊息, 預設下不會自動部署Dashboard, 因此要手動部署, 可以透過下列方式:
@@ -312,3 +381,4 @@ kubectl -n kubernetes-dashboard delete clusterrolebinding admin-user
 ```
 ![Kubernetes cluster 元件](../img/dashboard-login.png)
     <h4 align=center>使用token 來login</h4>
+
